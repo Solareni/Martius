@@ -1,4 +1,4 @@
-import useAppStore from "./appStore";
+import useAppStore from "../stores/appStore";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
 const openSettingsWindow = async (title: string) => {
