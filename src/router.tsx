@@ -28,7 +28,7 @@ const ThemeSettings = () => {
 const Router = () => {
   const router = createBrowserRouter([
     {
-      path: "/settings",
+      path: "/settings/*",
       element: <ThemeSettings />,
     },
     {
