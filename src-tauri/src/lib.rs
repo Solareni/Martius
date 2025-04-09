@@ -30,11 +30,11 @@ pub fn run() {
                     .min_inner_size(800.0, 600.0)
                     .inner_size(800.0, 600.0);
 
-                // // set transparent title bar only when building for macOS
-                // #[cfg(target_os = "macos")]
-                // let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
+                // set transparent title bar only when building for macOS
+                #[cfg(target_os = "macos")]
+                let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
 
-                // let window = win_builder.build().unwrap();
+                let window = win_builder.build().unwrap();
                 // #[cfg(target_os = "macos")]
                 // unsafe {
                 //     let ns_window = window.ns_window().unwrap();
@@ -60,7 +60,6 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
-
 
 fn emit_event<R: tauri::Runtime>(event: &Event, manager: &AppHandle<R>) {
     let message = serde_json::to_string(event).unwrap();
