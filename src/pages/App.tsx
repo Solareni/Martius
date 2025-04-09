@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useAppStore from "../stores/appStore";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
@@ -31,11 +32,12 @@ const openSettingsWindow = async (title: string) => {
 };
 
 const App = () => {
+  const { t } = useTranslation();
   const { toggleTheme } = useAppStore();
   return (
     <div className="flex h-screen w-screen flex-col items-center justify-center">
       <h1 className="text-4xl font-bold text-amber-600" onClick={toggleTheme}>
-        Hello World!
+        {t("hello")}
       </h1>{" "}
       <button onClick={() => openSettingsWindow("Settings")}>打开设置</button>
     </div>
