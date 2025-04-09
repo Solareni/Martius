@@ -1,5 +1,4 @@
 import useAppStore from "./appStore";
-import { Button } from "@radix-ui/themes";
 
 const App = () => {
   const { toggleTheme } = useAppStore();
