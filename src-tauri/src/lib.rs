@@ -1,3 +1,4 @@
+use std::os::raw::c_void;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::Mutex, AppHandle, Emitter, Manager};
@@ -6,6 +7,16 @@ use tauri::{WebviewUrl, WebviewWindowBuilder, TitleBarStyle};
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+extern "C" {
+    fn init_title(ns_window: *mut c_void);
+}
+
+#[no_mangle]
+unsafe extern "C" fn do_something(tag: i32) {
+    println!("do something: {}", tag);
+    RENDER_QUEUE.0.send(RenderCommand::FromNative(tag)).unwrap();
 }
 
 enum RenderCommand {
@@ -35,11 +46,11 @@ pub fn run() {
                 let win_builder = win_builder.title_bar_style(TitleBarStyle::Transparent);
 
                 let window = win_builder.build().unwrap();
-                // #[cfg(target_os = "macos")]
-                // unsafe {
-                //     let ns_window = window.ns_window().unwrap();
-                //     init_title(ns_window);
-                // }
+                #[cfg(target_os = "macos")]
+                unsafe {
+                    let ns_window = window.ns_window().unwrap();
+                    init_title(ns_window);
+                }
             }
 
             let app = app.handle().clone();
