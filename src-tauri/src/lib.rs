@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::Mutex, AppHandle, Emitter, Manager};
-use tauri::{WebviewUrl, WebviewWindowBuilder};
+use tauri::{WebviewUrl, WebviewWindowBuilder, TitleBarStyle};
 
 #[tauri::command]
 fn greet(name: &str) -> String {
