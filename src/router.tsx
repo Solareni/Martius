@@ -3,53 +3,45 @@ import useAppStore from "./stores/appStore";
 import App from "./pages/App";
 import Settings from "./pages/Settings";
 import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
+	createBrowserRouter,
+	Navigate,
+	RouterProvider,
 } from "react-router-dom";
-
-const ThemeApp = () => {
-  const { theme } = useAppStore();
-  return (
-    <Theme appearance={theme}>
-      <App />
-    </Theme>
-  );
-};
-const ThemeSettings = () => {
-  const { theme } = useAppStore();
-  return (
-    <Theme appearance={theme}>
-      <Settings />
-    </Theme>
-  );
-};
+import { useEffect } from "react";
 
 const Router = () => {
-  const router = createBrowserRouter([
-    {
-      path: "/settings/*",
-      element: <ThemeSettings />,
-    },
-    {
-      path: "/",
-      element: <ThemeApp />,
-    },
-    {
-      path: "*",
-      element: (
-        <Navigate
-          to={
-            window.location.search.includes("window=settings")
-              ? "/settings"
-              : "/"
-          }
-          replace
-        />
-      ),
-    },
-  ]);
-  return <RouterProvider router={router} />;
+	const { theme } = useAppStore();
+	useEffect(() => {
+		useAppStore.getState().listenThemeChange();
+	});
+	const router = createBrowserRouter([
+		{
+			path: "/settings/*",
+			element: <Settings />,
+		},
+		{
+			path: "/",
+			element: <App />,
+		},
+		{
+			path: "*",
+			element: (
+				<Navigate
+					to={
+						window.location.search.includes("window=settings")
+							? "/settings"
+							: "/"
+					}
+					replace
+				/>
+			),
+		},
+	]);
+	return (
+		<Theme appearance={theme}>
+			<RouterProvider router={router} />
+		</Theme>
+	);
 };
 
 export default Router;

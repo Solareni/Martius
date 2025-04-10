@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { emit, listen } from "@tauri-apps/api/event";
 
 interface AppStore {
 	theme: "light" | "dark";
@@ -7,17 +8,28 @@ interface AppStore {
 	setTheme: (theme: "light" | "dark") => void;
 	setLanguage: (language: string) => void;
 	toggleTheme: () => void;
+	listenThemeChange: () => Promise<void>;
 }
 
 const useAppStore = create<AppStore>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			theme: "light",
 			language: "en",
-			setTheme: (theme) => set({ theme }),
+			setTheme: async (theme) => {
+				await emit("theme-change", { theme });
+			},
 			setLanguage: (language) => set({ language }),
-			toggleTheme: () =>
-				set((state) => ({ theme: state.theme === "light" ? "dark" : "light" })),
+			toggleTheme: async () => {
+				const newTheme = get().theme === "light" ? "dark" : "light";
+				await emit("theme-change", { theme: newTheme });
+			},
+			listenThemeChange: async () => {
+				await listen("theme-change", (event) => {
+					const { theme } = event.payload as { theme: "light" | "dark" };
+					set({ theme });
+				});
+			},
 		}),
 		{
 			name: "app-store",
