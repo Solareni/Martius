@@ -2,8 +2,9 @@ use std::os::raw::c_void;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use tauri::{async_runtime::Mutex, AppHandle, Emitter, Manager};
-use tauri::{WebviewUrl, WebviewWindowBuilder, TitleBarStyle};
-
+use tauri::{WebviewUrl, WebviewWindowBuilder};
+#[cfg(target_os = "macos")]
+use tauri::TitleBarStyle;
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -67,7 +68,7 @@ pub fn run() {
             });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, which_ffmpeg])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -82,4 +83,9 @@ fn emit_event<R: tauri::Runtime>(event: &Event, manager: &AppHandle<R>) {
 enum Event {
     #[serde(rename = "sidebar_control")]
     SidebarControl,
+}
+
+#[tauri::command]
+fn which_ffmpeg() -> Option<String> {
+    which::which("ffmpeg").map(|v|v.display().to_string()).ok()
 }

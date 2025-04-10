@@ -8,7 +8,21 @@ import {
 	TextField,
 	Button,
 } from "@radix-ui/themes";
+import { invoke } from "@tauri-apps/api/core";
+import { useEffect, useState } from "react";
 const WhisperModel = () => {
+	const [ffmpegPath, setFfmpegPath] = useState<string>("");
+
+    useEffect(() => {
+        // Call which_ffmpeg when component mounts
+        invoke<string | null>("which_ffmpeg")
+            .then((path) => {
+                if (path) {
+                    setFfmpegPath(path);
+                }
+            })
+            .catch(console.error);
+    }, []);
 	return (
 		<Card size="3" style={{ padding: "20px" }}>
 			<Box mb="4">
@@ -19,6 +33,7 @@ const WhisperModel = () => {
 					<TextField.Root
 						style={{ flex: 1 }}
 						placeholder="FFmpeg可执行文件路径"
+						value={ffmpegPath}
 					>
 						<TextField.Slot />
 					</TextField.Root>
