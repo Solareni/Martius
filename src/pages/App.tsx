@@ -3,7 +3,8 @@ import useAppStore from "../stores/appStore";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { Avatar, Box, Flex } from "@radix-ui/themes";
 import { LuSun, LuMoon, LuSettings } from "react-icons/lu";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import Recents from "./Recents";
 
 const openSettingsWindow = async (title: string) => {
 	// 检查窗口是否已存在
@@ -17,10 +18,10 @@ const openSettingsWindow = async (title: string) => {
 		const secondWindow = new WebviewWindow("settings", {
 			url: "index.html?window=settings",
 			title,
-			x: 100,
-			y: 100,
 			width: 800,
 			height: 600,
+			minWidth: 800,
+			minHeight: 600,
 		});
 
 		// 等待窗口加载完成
@@ -58,7 +59,9 @@ const App = () => {
 			</Flex>
 
 			<Box className="flex-1">
-				<Outlet />
+				<Routes>
+					<Route path="/" element={<Recents />} />
+				</Routes>
 			</Box>
 		</Flex>
 	);

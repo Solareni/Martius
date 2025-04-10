@@ -10,22 +10,22 @@ interface AppStore {
 	toggleTheme: () => void;
 	listenThemeChange: () => Promise<void>;
 }
-
+const THEME_CHANGE_EVENT = "theme-change";
 const useAppStore = create<AppStore>()(
 	persist(
 		(set, get) => ({
 			theme: "light",
 			language: "en",
 			setTheme: async (theme) => {
-				await emit("theme-change", { theme });
+				await emit(THEME_CHANGE_EVENT, { theme });
 			},
 			setLanguage: (language) => set({ language }),
 			toggleTheme: async () => {
 				const newTheme = get().theme === "light" ? "dark" : "light";
-				await emit("theme-change", { theme: newTheme });
+				await emit(THEME_CHANGE_EVENT, { theme: newTheme });
 			},
 			listenThemeChange: async () => {
-				await listen("theme-change", (event) => {
+				await listen(THEME_CHANGE_EVENT, (event) => {
 					const { theme } = event.payload as { theme: "light" | "dark" };
 					set({ theme });
 				});
