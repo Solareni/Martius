@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from "react";
-import { Flex, TextField, Text, Table, Box } from "@radix-ui/themes";
-import { TableVirtuoso } from "react-virtuoso";
+import { Flex, TextField, Text, Box } from "@radix-ui/themes";
+import { Virtuoso } from "react-virtuoso";
 
 interface Recording {
 	id: string;
@@ -51,9 +51,6 @@ const Recents = () => {
 		setSearchQuery(e.target.value);
 	};
 
-	// 三列均匀分布的宽度配置
-	const columnWidths = ["33.33%", "33.33%", "33.33%"];
-
 	return (
 		<Flex direction="column" gap="4" p="4" width="100%">
 			<TextField.Root
@@ -66,57 +63,34 @@ const Recents = () => {
 				共 {filteredRecordings.length} 条录音
 			</Text>
 
-			<Box className="w-full h-[500px]">
-				<TableVirtuoso
-					className="w-full"
-					style={{ width: "100%" }}
+			{/* 表头 */}
+			<Flex 
+				style={{ 
+					borderBottom: "1px solid #e0e0e0", 
+					padding: "12px 0",
+					fontWeight: "bold" 
+				}}
+			>
+				<Box style={{ flex: 1 }}>文件</Box>
+				<Box style={{ flex: 1 }}>时长</Box>
+				<Box style={{ flex: 1 }}>创建时间</Box>
+			</Flex>
+
+			<Box style={{ height: "500px", width: "100%" }}>
+				<Virtuoso
+					style={{ height: "100%", width: "100%" }}
 					data={filteredRecordings}
-					components={{
-						Table: ({ style, ...props }) => (
-							<Table.Root 
-								{...props} 
-								variant="surface" 
-								size="2"
-								style={{ ...style, width: "100%" }}
-								className="w-full"
-							/>
-						),
-						TableHead: Table.Header,
-						TableRow: Table.Row,
-						TableBody: ({ style, ...props }) => (
-							<tbody {...props} style={{ ...style, width: "100%" }} className="w-full" />
-						),
-						EmptyPlaceholder: () => (
-							<div style={{ padding: "1rem", textAlign: "center" }}>
-								No records found
-							</div>
-						)
-					}}
-					fixedHeaderContent={() => (
-						<Table.Row className="w-full">
-							<Table.ColumnHeaderCell style={{ width: columnWidths[0] }}>
-								文件
-							</Table.ColumnHeaderCell>
-							<Table.ColumnHeaderCell style={{ width: columnWidths[1] }}>
-								时长
-							</Table.ColumnHeaderCell>
-							<Table.ColumnHeaderCell style={{ width: columnWidths[2] }}>
-								创建时间
-							</Table.ColumnHeaderCell>
-						</Table.Row>
-					)}
 					itemContent={(index, recording) => (
-						<>
-							<Table.Cell style={{ width: columnWidths[0] }}>
-								{recording.fileName}
-							</Table.Cell>
-							<Table.Cell style={{ width: columnWidths[1] }}>
-								{formatDuration(recording.duration)}
-							</Table.Cell>
-							<Table.Cell style={{ width: columnWidths[2] }}>
-								{new Date(recording.createdAt).toLocaleString()}
-							</Table.Cell>
-						</>
+						<Flex
+							style={{
+								padding: "12px 0",
+								borderBottom: "1px solid #e0e0e0",
+							}}
+						>
+							<Box style={{ flex: 1 }}>{recording.fileName}</Box>
+							<Box style={{ flex: 1 }}>{formatDuration(recording.duration)}</Box>
+							<Box style={{ flex: 1 }}>{new Date(recording.createdAt).toLocaleString()}</Box>
+						</Flex>
 					)}
 				/>
 			</Box>
